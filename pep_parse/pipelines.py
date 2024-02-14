@@ -6,16 +6,13 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-counter = Counter()
-
-
 class PepParsePipeline:
     def open_spider(self, spider):
-        pass
+        self.counter = Counter()
 
     def process_item(self, item, spider):
         status = item['status']
-        counter.update([status])
+        self.counter.update([status])
         return item
 
     def close_spider(self, spider):
@@ -28,7 +25,7 @@ class PepParsePipeline:
         with open(filename, mode='w', encoding='utf-8', newline='') as f:
             writter = csv.writer(f)
             writter.writerow(['Статус', 'Количество'])
-            for status, count in counter.items():
+            for status, count in self.counter.items():
                 writter.writerow([status, count])
-            total_count = sum(counter.values())
+            total_count = sum(self.counter.values())
             writter.writerow(['Total', total_count])
